@@ -1032,6 +1032,10 @@ window.showView = function(name, fromBack=false) {
     // navigates within the app instead of leaving the site entirely.
     try{ history.pushState({mvDepth: mobileViewHistory.length}, '', location.href); }catch(e){}
   }
+  // Remember if the admin was inside the admin panel, so a page refresh
+  // brings them straight back to it instead of the shop page.
+  if(name==='admin') localStorage.setItem('lastView','admin');
+  else if(name==='adminGate' || name==='shop') localStorage.removeItem('lastView');
   const mShop = document.getElementById('mobileShopBtn');
   const mCart = document.getElementById('mobileCartBtn');
   if(mShop && mCart){
@@ -1730,6 +1734,7 @@ window.adminLogin=async function(){
 }
 window.adminLogout=async function(){
   await signOut(auth);
+  localStorage.removeItem('lastView');
   showView('shop');
 }
 
@@ -2453,11 +2458,21 @@ setTimeout(()=>{
 
 // Auth state listener — orders শুধু logged-in admin এর জন্য
 let ordersUnsubscribe = null;
+let didRestoreAdminView = false;
 onAuthStateChanged(auth, user => {
   if (user) {
     if (!ordersUnsubscribe) ordersUnsubscribe = listenOrders();
+    // Page refresh হলে, admin আগে admin panel-এ থাকলে সরাসরি সেখানেই ফিরিয়ে দাও
+    // (একবারই — user navigate করে সরে গেলে পরে আবার টেনে আনবে না)
+    if (!didRestoreAdminView) {
+      didRestoreAdminView = true;
+      if (localStorage.getItem('lastView') === 'admin') {
+        showView('admin', true);
+      }
+    }
   } else {
     if (ordersUnsubscribe) { ordersUnsubscribe(); ordersUnsubscribe = null; orders = []; }
+    didRestoreAdminView = true;
   }
 });
 </script>
