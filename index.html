@@ -206,6 +206,17 @@ tr:hover td{background:var(--surface2);}
   #mobileBottomNav .capsule-btn{flex:1 1 0;padding:11px 10px;font-size:0.76rem;gap:5px;white-space:nowrap;}
 }
 .rte-toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+/* ===== Branded splash / loading screen ===== */
+#splashScreen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:rgba(10,14,26,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:opacity 0.45s ease;}
+body.light #splashScreen{background:rgba(248,246,241,0.65);}
+#splashScreen.fade-out{opacity:0;pointer-events:none;}
+.splash-ring{position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center;}
+.splash-ring::before{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid var(--border);border-top-color:var(--accent);animation:splashspin 0.9s linear infinite;}
+.splash-logo-circle{width:84px;height:84px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,0.3);overflow:hidden;}
+.splash-logo-circle img{width:100%;height:100%;object-fit:cover;}
+#splashLogoText{font-size:2.1rem;}
+.splash-name{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.35rem;color:var(--text);letter-spacing:-0.5px;text-align:center;padding:0 20px;}
+@keyframes splashspin{to{transform:rotate(360deg);}}
 .rte-toolbar button{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.85rem;font-family:'Space Grotesk',sans-serif;}
 .rte-toolbar button:hover{border-color:var(--accent);color:var(--accent);}
 .rte-editor{min-height:120px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:8px;font-family:'Space Grotesk',sans-serif;outline:none;line-height:1.6;}
@@ -226,6 +237,17 @@ tr:hover td{background:var(--surface2);}
 </style>
 </head>
 <body>
+
+<!-- Branded splash/loading screen shown while settings (shop name/logo) load -->
+<div id="splashScreen">
+  <div class="splash-ring">
+    <div class="splash-logo-circle">
+      <img id="splashLogoImg" src="" alt="logo" style="display:none;">
+      <span id="splashLogoText">⚡</span>
+    </div>
+  </div>
+  <div id="splashShopName" class="splash-name">Loading...</div>
+</div>
 
 <nav>
   <div class="mobile-left-group">
@@ -726,6 +748,16 @@ async function loadSettings() {
 function applySettings() {
   document.getElementById('shopNameNav').textContent = settings.shopName;
   document.getElementById('pageTitle').textContent = settings.shopName;
+  // Splash screen: show the real shop name/logo instead of placeholder
+  const splashName = document.getElementById('splashShopName');
+  if(splashName) splashName.textContent = settings.shopName;
+  const splashImg = document.getElementById('splashLogoImg');
+  const splashTxt = document.getElementById('splashLogoText');
+  if(settings.logoUrl && splashImg && splashTxt){
+    splashImg.src = settings.logoUrl;
+    splashImg.style.display='block';
+    splashTxt.style.display='none';
+  }
   // Footer
   const footerName = document.getElementById('footerShopName');
   const footerTag = document.getElementById('footerTagline');
@@ -2403,7 +2435,21 @@ listenProducts();
 updateCartBadge();
 loadSettings().then(() => {
   applyLangStatic(); // re-apply after settings loaded (footerWaLabel needs settings)
+  // Real shop name/logo is now known — fade out the branded splash screen
+  const splash = document.getElementById('splashScreen');
+  if(splash){
+    splash.classList.add('fade-out');
+    setTimeout(()=>{ splash.style.display='none'; }, 500);
+  }
 });
+// Safety net: never let the splash block the site for more than 8s even if something above fails
+setTimeout(()=>{
+  const splash = document.getElementById('splashScreen');
+  if(splash && !splash.classList.contains('fade-out')){
+    splash.classList.add('fade-out');
+    setTimeout(()=>{ splash.style.display='none'; }, 500);
+  }
+}, 8000);
 
 // Auth state listener — orders শুধু logged-in admin এর জন্য
 let ordersUnsubscribe = null;
