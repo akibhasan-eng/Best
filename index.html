@@ -37,7 +37,13 @@ nav{background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid 
 #mobileBackBtn{display:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;cursor:pointer;font-size:1.15rem;flex-shrink:0;transition:all 0.2s;}
 .mobile-left-group{display:none;}
 #mobileLangSlider{display:none;}
-#mobileThemeToggle{display:none;}
+.mobile-menu-wrap{display:none;}
+#mobileMenuBtn{display:none;}
+#mobileMenuDropdown{display:none;position:absolute;top:46px;right:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.35);min-width:190px;padding:8px;z-index:500;flex-direction:column;gap:4px;}
+.mobile-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;background:transparent;border:none;border-radius:9px;color:var(--text);font-size:0.88rem;font-weight:700;cursor:pointer;text-align:left;font-family:'Space Grotesk',sans-serif;transition:background 0.15s;}
+.mobile-menu-item:active{background:var(--surface2);}
+.lang-slider-mini{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px;gap:0;}
+.lang-slider-mini span{padding:4px 10px;border-radius:16px;font-size:0.78rem;font-weight:700;transition:all 0.2s;}
 #mobileBottomNav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--nav-bg);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:10px 14px calc(10px + env(safe-area-inset-bottom));align-items:center;justify-content:space-between;gap:10px;}
 /* Glossy iPhone-style capsule buttons */
 .capsule-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(180deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0) 45%),var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:999px;font-family:'Space Grotesk',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.25s;flex:1;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),inset 0 -1px 2px rgba(0,0,0,0.12),0 2px 6px rgba(0,0,0,0.15);}
@@ -182,19 +188,19 @@ tr:hover td{background:var(--surface2);}
   .sidebar-link{padding:8px 10px;font-size:0.78rem;border:1px solid var(--border);border-radius:8px;margin-bottom:0;}
   .admin-main{padding:16px;}
   .cart-item{flex-wrap:wrap;}
-  /* ===== Mobile nav layout: back+lang(left) / shop-name(center) / theme+account(right) top,
+  /* ===== Mobile nav layout: back(left) / shop-name(center) / 3-dot menu(right) top,
      whatsapp / shop / cart (equal-size capsules) bottom ===== */
   nav{display:grid;grid-template-columns:auto 1fr auto;align-items:center;padding:0 10px;height:56px;column-gap:8px;}
   .mobile-left-group{display:flex;align-items:center;gap:8px;grid-column:1;justify-self:start;}
   #mobileBackBtn{display:flex;}
-  #mobileLangSlider{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px;gap:0;height:38px;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+  #mobileLangSlider{display:none !important;}
   .nav-logo-wrap{grid-column:2;justify-self:center;}
   .nav-logo-text{font-size:1rem;}
-  #desktopNavExtras,#shopNavBtnDesktop,.cart-btn{display:none !important;}
+  #desktopNavExtras,#shopNavBtnDesktop,.cart-btn,#accountNavBtn{display:none !important;}
   .nav-links{grid-column:3;justify-self:end;display:flex;align-items:center;gap:8px;}
-  #mobileThemeToggle{display:flex;width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;transition:all 0.2s;}
-  #accountNavBtn{width:38px;height:38px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;}
-  #accountNavBtn .acct-label{display:none;}
+  .mobile-menu-wrap{display:block;position:relative;}
+  #mobileMenuBtn{display:flex;width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;transition:all 0.2s;line-height:1;}
+  #mobileMenuDropdown.open{display:flex;}
   body{padding-bottom:80px;}
   #mobileBottomNav{display:flex;}
   #mobileBottomNav .capsule-btn{flex:1 1 0;padding:11px 10px;font-size:0.76rem;gap:5px;white-space:nowrap;}
@@ -224,11 +230,6 @@ tr:hover td{background:var(--surface2);}
 <nav>
   <div class="mobile-left-group">
     <button id="mobileBackBtn" onclick="mobileGoBack()" title="Back">←</button>
-    <!-- Mobile-only language toggle, placed right of the back button -->
-    <div id="mobileLangSlider" onclick="toggleLang()" title="Language">
-      <span id="langBnMobile" style="padding:4px 10px;border-radius:16px;font-size:0.78rem;font-weight:700;transition:all 0.2s;">বাং</span>
-      <span id="langEnMobile" style="padding:4px 10px;border-radius:16px;font-size:0.78rem;font-weight:700;transition:all 0.2s;">EN</span>
-    </div>
   </div>
   <div class="nav-logo-wrap" id="navLogo">
     <img id="navLogoImg" class="nav-logo-img" src="" alt="logo">
@@ -243,8 +244,25 @@ tr:hover td{background:var(--surface2);}
         <span id="langEn" style="padding:4px 10px;border-radius:16px;font-size:0.78rem;font-weight:700;color:var(--muted);transition:all 0.2s;">EN</span>
       </div>
     </div>
-    <!-- Mobile-only theme toggle, placed left of the account icon -->
-    <button id="mobileThemeToggle" onclick="toggleTheme()" title="Theme পরিবর্তন করো">🌙</button>
+    <!-- Mobile-only 3-dot menu: theme toggle, language slider, account -->
+    <div class="mobile-menu-wrap">
+      <button id="mobileMenuBtn" onclick="toggleMobileMenu()" title="Menu">⋮</button>
+      <div id="mobileMenuDropdown">
+        <button class="mobile-menu-item" onclick="toggleTheme()">
+          <span id="mobileMenuThemeIcon">🌙</span> <span id="mobileMenuThemeLabel">Dark Mode</span>
+        </button>
+        <div class="mobile-menu-item" onclick="toggleLang()" style="cursor:pointer;">
+          <span data-i18n="language">Language</span>
+          <div class="lang-slider-mini" style="margin-left:auto;">
+            <span id="langBnMobile" style="background:var(--accent);color:#fff;">বাং</span>
+            <span id="langEnMobile" style="color:var(--muted);">EN</span>
+          </div>
+        </div>
+        <button class="mobile-menu-item" onclick="handleAccountNavClick();closeMobileMenu();">
+          👤 <span data-i18n="account">Account</span>
+        </button>
+      </div>
+    </div>
     <button class="nav-btn active" id="shopNavBtnDesktop" onclick="showView('shop')" data-i18n="shop">Shop</button>
     <button class="nav-btn" id="accountNavBtn" onclick="handleAccountNavClick()">👤 <span class="acct-label" id="accountNavLabel" data-i18n="account">Account</span></button>
     <button class="cart-btn" onclick="showView('cart')">🛒 <span data-i18n="cart">Cart</span> <span class="badge" id="cartCount">0</span></button>
@@ -978,6 +996,9 @@ window.showView = function(name, fromBack=false) {
   // Track history for mobile back button, and sync bottom capsule nav glow
   if(!fromBack && mobileViewHistory[mobileViewHistory.length-1] !== name){
     mobileViewHistory.push(name);
+    // Push a real browser history entry so the device/browser back button
+    // navigates within the app instead of leaving the site entirely.
+    try{ history.pushState({mvDepth: mobileViewHistory.length}, '', location.href); }catch(e){}
   }
   const mShop = document.getElementById('mobileShopBtn');
   const mCart = document.getElementById('mobileCartBtn');
@@ -985,8 +1006,37 @@ window.showView = function(name, fromBack=false) {
     mShop.classList.toggle('glow', name==='shop' || name==='product');
     mCart.classList.toggle('glow', name==='cart');
   }
+  closeMobileMenu();
   window.scrollTo(0,0);
 }
+
+// When the user taps the phone/browser back button, go back one step inside
+// the app (if there's an internal view to return to) instead of exiting the site.
+try{ history.replaceState({mvDepth: 1}, '', location.href); }catch(e){}
+window.addEventListener('popstate', function(){
+  if(mobileViewHistory.length > 1){
+    mobileViewHistory.pop();
+    const prev = mobileViewHistory[mobileViewHistory.length-1];
+    showView(prev, true);
+  }
+  // else: nothing left in our internal stack — let the browser leave the site normally.
+});
+
+window.toggleMobileMenu = function(){
+  const dd=document.getElementById('mobileMenuDropdown');
+  if(dd) dd.classList.toggle('open');
+}
+window.closeMobileMenu = function(){
+  const dd=document.getElementById('mobileMenuDropdown');
+  if(dd) dd.classList.remove('open');
+}
+document.addEventListener('click', function(e){
+  const wrap=document.querySelector('.mobile-menu-wrap');
+  const dd=document.getElementById('mobileMenuDropdown');
+  if(dd && dd.classList.contains('open') && wrap && !wrap.contains(e.target)){
+    dd.classList.remove('open');
+  }
+});
 
 window.mobileGoBack = function(){
   if(mobileViewHistory.length > 1){
@@ -1636,8 +1686,14 @@ window.adminLogin=async function(){
     await signInWithEmailAndPassword(auth,email,p);
     showView('admin');renderAdminDashboard();
   }catch(e){
-    toast('Wrong email or password!',true);
     console.error(e);
+    if(e.code==='auth/network-request-failed'){
+      toast('ইন্টারনেট/নেটওয়ার্ক সমস্যা — কানেকশন চেক করে আবার চেষ্টা করো!',true);
+    } else if(e.code==='auth/too-many-requests'){
+      toast('অনেকবার চেষ্টা হয়েছে, একটু পর আবার চেষ্টা করো!',true);
+    } else {
+      toast('Wrong email or password!',true);
+    }
   }
 }
 window.adminLogout=async function(){
@@ -2132,7 +2188,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); 
 // ===== LANGUAGE / i18n =====
 const i18n = {
   bn: {
-    shop:'শপ', cart:'কার্ট',
+    shop:'শপ', cart:'কার্ট', language:'ভাষা', darkMode:'ডার্ক মোড', lightMode:'লাইট মোড',
     heroTag:'// ইলেকট্রনিক্স ও রোবোটিক্স',
     browseCategory:'// ক্যাটাগরি অনুযায়ী দেখো',
     products:'পণ্য সমূহ',
@@ -2196,7 +2252,7 @@ const i18n = {
     logoutBtn:'Logout',
   },
   en: {
-    shop:'Shop', cart:'Cart',
+    shop:'Shop', cart:'Cart', language:'Language', darkMode:'Dark Mode', lightMode:'Light Mode',
     heroTag:'// ELECTRONICS & ROBOTICS',
     browseCategory:'// Browse by Category',
     products:'Products',
@@ -2305,17 +2361,20 @@ function applyLangStatic(){
 }
 
 function applyTheme(mode){
-  const btnM=document.getElementById('mobileThemeToggle');
+  const iconM=document.getElementById('mobileMenuThemeIcon');
+  const labelM=document.getElementById('mobileMenuThemeLabel');
   if(mode==='light'){
     document.body.classList.add('light');
     const btn=document.getElementById('themeToggleBtn');
     if(btn) btn.textContent='☀️';
-    if(btnM) btnM.textContent='☀️';
+    if(iconM) iconM.textContent='☀️';
+    if(labelM) labelM.textContent=t('lightMode');
   } else {
     document.body.classList.remove('light');
     const btn=document.getElementById('themeToggleBtn');
     if(btn) btn.textContent='🌙';
-    if(btnM) btnM.textContent='🌙';
+    if(iconM) iconM.textContent='🌙';
+    if(labelM) labelM.textContent=t('darkMode');
   }
   localStorage.setItem('theme',mode);
 }
@@ -2358,4 +2417,3 @@ onAuthStateChanged(auth, user => {
 </script>
 </body>
 </html>
-
